@@ -1,9 +1,90 @@
-import example.pepita
+import example.*
 
-describe "group of tests for pepita" {
+describe "group of tests for mensajeros" {
 
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
+  test "Roberto (90kg) puede llevar un paquete que está pago en un camión que tiene un acoplado." {
+    roberto.cambiarVehiculo(camion)
+    paquete.cambiarDestino(puenteDeBrooklyn)
+    assert.equals(true, paquete.puedeEntregar(roberto))
+  }
+
+  test "Neo con crédito no puede llevar un paquete que no está pago a la matrix." {
+    paquete.faltaPago()
+    paquete.cambiarDestino(laMatrix)
+    assert.equals(false, paquete.puedeEntregar(neo))
+  }
+
+}
+
+describe "group of tests for empresa" {
+
+  test "Contratar a un mensajero." {
+    empresa.contratar(roberto)
+    assert.equals(true, empresa.mensajeros.contains(roberto))
+  }
+
+  test "Despedir a un mensajero." {
+    empresa.despedir(chuck)
+    assert.equals(false, empresa.mensajeros.contains(chuck))
+  }
+
+  test "Despedir a todos los mensajeros." {
+    empresa.despedirATodos()
+    assert.equals(0, empresa.mensajeros.size())
+  }
+
+  test "Analizar si la mensajería es grande." {
+    assert.equals(true, empresa.esGrande())
+  }
+
+  test "Consultar si un paquete puede ser entregado por el primer empleado." {
+    assert.equals(paquete.puedeEntregar(empresa.primerMensajero()), empresa.puedeEntregarPrimero(paquete))
+  }
+
+  test "Saber el peso del último mensajero de la empresa." {
+    assert.equals(empresa.ultimoMensajero().peso(), empresa.pesoUltimoMensajero())
+  }
+  
+}
+
+describe "group of tests for empresa(recargada)" {
+
+  test "Averiguar si un paquete puede ser entregado por la empresa." {
+    assert.equals(true, empresa.puedeEntregar(paquete))
+  }
+
+  test "Obtener todos los mensajeros que pueden llevar un paquete." {
+    assert.equals(empresa.mensajerosQuePueden(paquete), empresa.mensajeros.filter{m => paquete.puedeEntregar(m)})
+  }
+
+  test "Saber si la empresa tiene sobrepeso." {
+    assert.equals(false, empresa.tieneSobrePeso())
+  }
+
+  test "Enviar un paquete (si no puede se agrega a pendientes)." {
+    empresa.enviar(paquetito)
+    assert.equals(true, empresa.paquetesEnviados.contains(paquetito))
+  }
+
+  test "Conocer la facturación de la empresa." {
+    empresa.paquetesEnviados.clear()
+    empresa.enviar(paquete)
+    assert.equals(50, empresa.facturacion())
+  }
+
+  test "Enviar todos los paquetes de un conjunto." {
+    empresa.paquetesEnviados.clear()
+    empresa.enviarTodos([paquete, paquetito])
+    assert.equals(2, empresa.paquetesEnviados.size())
+  }
+
+  test "Enviar el paquete pendiente más caro." {
+    empresa.paquetesPendientes.clear()
+    empresa.paquetesPendientes.add(paqueton)
+    paqueton.agregarDestino(puenteDeBrooklyn)
+    paqueton.pagar(100)
+    empresa.enviarPendienteMasCaro()
+    assert.equals(false, empresa.paquetesPendientes.contains(paqueton))
   }
 
 }
